@@ -1,0 +1,151 @@
+class HTMLElement {
+    protected $tag;
+    protected $attributs;
+    protected $contenu;
+
+    public function __construct($tag, $attributes = [], $content = '') {
+        $this->tag = $tag;
+        $this->attributes = $attributes;
+        $this->content = $content;
+    }
+
+    public function render() {
+        $output = '<' . $this->tag;
+        foreach ($this->attributes as $key => $value) {
+            $output .= ' ' . $key . '="' . $value . '"';
+        }
+        $output .= '>' . $this->content . '</' . $this->tag . '>';
+        return $output;
+    }
+}
+
+class Input extends HTMLElement {
+    public function __construct($type, $name, $value = '', $attributes = []) {
+        parent::__construct('input', array_merge(['type' => $type, 'name' => $name, 'value' => $value], $attributes));
+    }
+}
+
+class Button extends HTMLElement {
+    public function __construct($name, $text, $attributes = []) {
+        parent::__construct('button', array_merge(['name' => $name], $attributes), $text);
+    }
+}
+
+class Select extends HTMLElement {
+    public function __construct($name, $options, $attributes = []) {
+        $optionsHtml = '';
+        foreach ($options as $value => $label) {
+            $optionsHtml .= '<option value="' . $value . '">' . $label . '</option>';
+        }
+        parent::__construct('select', array_merge(['name' => $name], $attributes), $optionsHtml);
+    }
+}
+
+class Checkbox extends HTMLElement {
+    public function __construct($name, $value, $checked = false, $attributes = []) {
+        parent::__construct('input', array_merge(['type' => 'checkbox', 'name' => $name, 'value' => $value, 'checked' => ($checked ? 'checked' : '')], $attributes));
+    }
+}
+
+class Radio extends HTMLElement {
+    public function __construct($name, $value, $checked = false, $attributes = []) {
+        parent::__construct('input', array_merge(['type' => 'radio', 'name' => $name, 'value' => $value, 'checked' => ($checked ? 'checked' : '')], $attributes));
+    }
+}
+
+class Textarea extends HTMLElement {
+    public function __construct($name, $placeholder = '', $attributes = []) {
+        parent::__construct('textarea', array_merge(['name' => $name, 'placeholder' => $placeholder], $attributes));
+    }
+}
+
+class Form {
+    private $attributes;
+    private $elements;
+
+    public function __construct($action, $method = 'post', $attributes = []) {
+        $this->attributes = array_merge(['action' => $action, 'method' => $method], $attributes);
+        $this->elements = [];
+    }
+
+    public function addElement($element) {
+        $this->elements[] = $element;
+    }
+
+    public function render() {
+        // ... (méthode render)
+    }
+}
+
+class FileUpload {
+    public static function upload($inputName, $uploadDir) {
+        // ... (méthode upload)
+    }
+}
+
+class Session {
+    public static function start() {
+        session_start();
+    }
+
+    public static function set($key, $value) {
+        $_SESSION[$key] = $value;
+    }
+
+    public static function get($key, $default = null) {
+        return $_SESSION[$key] ?? $default;
+    }
+}
+
+class Cookie {
+    public static function set($key, $value, $expiration) {
+        setcookie($key, $value, time() + $expiration);
+    }
+
+    public static function get($key, $default = null) {
+        return $_COOKIE[$key] ?? $default;
+    }
+
+    public static function delete($key) {
+        setcookie($key, '', time() - 3600);
+    }
+}
+
+class Request {
+    public static function get($key, $default = null) {
+        return $_GET[$key] ?? $default;
+    }
+
+    public static function post($key, $default = null) {
+        return $_POST[$key] ?? $_FILES[$key] ?? null;
+    }
+}
+
+
+
+class Form {
+    private $attributes;
+    private $elements;
+
+    public function __construct($attributes) {
+        $this->attributes = $attributes;
+        $this->elements = [];
+    }
+
+    public function addElement($element) {
+        $this->elements[] = $element;
+    }
+
+    public function render() {
+        $output = '<form';
+        foreach ($this->attributes as $key => $value) {
+            $output .= ' ' . $key . '="' . $value . '"';
+        }
+        $output .= '>';
+        foreach ($this->elements as $element) {
+            $output .= $element->render();
+        }
+        $output .= '</form>';
+        return $output;
+    }
+}
